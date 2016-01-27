@@ -1,4 +1,4 @@
-//package domain;
+package domain;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,15 +65,11 @@ public class Main {
 	private static void addRijg(String rijg) {
 		if(rijgjes.isEmpty()){
     		rijgjes.add(rijg);
-        }else{
-        	for(String s : rijgjes){
-        		if(rijg.length() > s.length()){
-        			rijgjes.remove(s);
+        }else if(rijg.length() > rijgjes.iterator().next().length() ){
+        			rijgjes.clear();
 	            	rijgjes.add(rijg);
-        		}
+        		
         	}
-        }
-		
 	}
 
 	private static String find(ArrayList<String> words) {
