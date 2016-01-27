@@ -49,25 +49,32 @@ public class Main {
 	private static void permute(ArrayList<String> words, int k){
         for(int i = k; i < words.size(); i++){
             Collections.swap(words, i, k);
-            permute(words, k+1);
-            Collections.swap(words, k, i);
-        }
-        if (k == words.size() -1){
             String rijg = find(words);
             if(rijg != null){
-            	if(rijgjes.isEmpty()){
-            		rijgjes.add(rijg);
-	            }else{
-	            	for(String s : rijgjes){
-	            		if(rijg.length() > s.length()){
-	            			rijgjes.remove(s);
-	    	            	rijgjes.add(rijg);
-	            		}
-	            	}
-	            }
+            	addRijg(rijg);
+            }else{
+            	permute(words, k+1);
+            	Collections.swap(words, k, i);
             }
         }
+        if (k == words.size() -1){
+            return;
+        }
     }
+
+	private static void addRijg(String rijg) {
+		if(rijgjes.isEmpty()){
+    		rijgjes.add(rijg);
+        }else{
+        	for(String s : rijgjes){
+        		if(rijg.length() > s.length()){
+        			rijgjes.remove(s);
+	            	rijgjes.add(rijg);
+        		}
+        	}
+        }
+		
+	}
 
 	private static String find(ArrayList<String> words) {
 		int wordCount = 1;
