@@ -77,7 +77,7 @@ public class Main {
             if( lastLetter( words.get(i-1) ) == firstLetter( words.get(i) ) ){
                 rijg += words.get(i);
                 wordCount++;
-            }else if(wordCount >= 3){
+            }else if(wordCount >= 2){
                 return rijg;
             }else{
                 return null;
