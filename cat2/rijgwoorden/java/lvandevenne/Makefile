@@ -1,6 +1,6 @@
 all: wedstrijd
 
-Main.class:
+Main.class: Main.java
 	javac Main.java
 
 voorbeeld: Main.class
