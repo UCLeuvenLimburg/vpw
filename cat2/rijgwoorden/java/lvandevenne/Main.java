@@ -1,3 +1,5 @@
+//package domain;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,6 +10,7 @@ import java.util.Scanner;
 public class Main {
 
     private static HashSet<String> rijgjes = null;
+    private static ArrayList<String> copy = null;
 
         
     public static void main(String[] args){
@@ -17,26 +20,30 @@ public class Main {
         ArrayList<String> words = null;
                 
         for(int i = 1; i <= aantal; i++){
-            rijgjes = new HashSet<>();
-            words = new ArrayList<String>( Arrays.asList(R.lineArray()) );
-            if(Integer.parseInt(words.get(0)) < 3){
-                System.out.print(i + " geen oplossing\n");
-            }else{
-                words.remove(0);
-                permute(words, 0);
-                print(i);
-            }
+        	rijgjes = new HashSet<>();
+        	words = new ArrayList<>(Arrays.asList(R.lineArray()));
+        	
+        	if(Integer.parseInt( words.get(0) ) >= 2){
+        		words.remove(0);
+	        	permute(words, 0);
+        	}
+        	
+        	copy = new ArrayList<>(rijgjes);
+	        Collections.sort(copy);
+        	
+	        print(i);
+        	
         }
                 
         R.close();
     }
         
     private static void print(int index){
-        if(rijgjes.isEmpty()){
+        if(copy.isEmpty()){
             System.out.print(index + " geen oplossing\n");
         }else{
             System.out.print(index);
-            for(String s : rijgjes){
+            for(String s : copy){
                 System.out.print(" " + s);
             }
             System.out.print("\n");
@@ -45,19 +52,24 @@ public class Main {
     }
         
     private static void permute(ArrayList<String> words, int k){
+    	if(k >= 2){
+	    	String rijg = "";
+	    	for(int count = 0; count < k; count++){
+	    		rijg += words.get(count);
+	    	}
+	    	addRijg(rijg);
+    	}
+   	
         for(int i = k; i < words.size(); i++){
-            Collections.swap(words, i, k);
-            String rijg = find(words);
-            if(rijg != null){
-                addRijg(rijg);
-            }else{
-                permute(words, k+1);
-                Collections.swap(words, k, i);
-            }
+	        if( k == 0 
+	           	|| ( lastLetter(words.get(k-1)) == firstLetter(words.get(i)) ) ){
+	         
+	        	Collections.swap(words, i, k);
+	           	permute(words, k+1);
+	            Collections.swap(words, k, i);
+	        }
         }
-        if (k == words.size() -1){
-            return;
-        }
+
     }
 
     private static void addRijg(String rijg) {
@@ -66,7 +78,8 @@ public class Main {
         }else if(rijg.length() > rijgjes.iterator().next().length() ){
             rijgjes.clear();
             rijgjes.add(rijg);
-                        
+        }if(rijg.length() == rijgjes.iterator().next().length() ){
+        	rijgjes.add(rijg);
         }
     }
 
