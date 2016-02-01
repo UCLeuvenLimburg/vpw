@@ -105,11 +105,11 @@ public class Main
 
     private static char firstLetter(String str)
     {
-        return str.toCharArray()[0];
+        return str.charAt(0);
     }
 
     private static char lastLetter(String str)
     {
-        return str.toCharArray()[str.length() - 1];
+        return str.charAt(str.length() - 1);
     }
 }
