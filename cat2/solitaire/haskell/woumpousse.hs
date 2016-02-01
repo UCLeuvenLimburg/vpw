@@ -19,11 +19,15 @@ jumps :: [Bool] -> [[Bool]]
 jumps bs = rightJumps bs ++ leftJumps bs
 
 
+nest :: (a -> a) -> Int -> a -> a
+---------------------------------
+nest f 0 = id
+nest f n = f . nest f (n - 1)
+
+
 reduce :: [Bool] -> [[Bool]]
 ----------------------------
-reduce bs
-  | count bs == 1       = [ bs ]
-  | otherwise           = nub $ concatMap reduce (jumps bs)
+reduce bs = nest (nub . concatMap jumps) (count bs - 1) [bs]
 
 
 count :: [Bool] -> Int
