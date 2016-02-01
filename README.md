@@ -1,8 +1,8 @@
 # Instructions
 1. Fork this repository using Bitbucket's web interface
 2. Clone your fork, this copies all data to your local machine. **git clone https://*yourlogin*@bitbucket.org/*yourlogin*/ucll-vpw.**
-3. In your local repository, create a new branch. **git branch *mybranch***
-4. Switch to this branch. **git checkout *mybranch***
+3. In your local repository, create a new branch. **git branch *mybranch* **
+4. Switch to this branch. **git checkout *mybranch* **
 5. Tell git you want this local branch to also exist in the remote repository. **get branch -u origin/*mybranch* **
 6. Write solution to some problem
 7. Add the files to the staging area. **git add *file1* *file2* ...**
