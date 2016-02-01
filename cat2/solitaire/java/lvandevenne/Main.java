@@ -8,27 +8,41 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class Main {
-	
-	private static Set<Integer[]> result;
-	
+		
     public static void main(String[] args){
         R.open();
                 
         int aantal = R.integer();
         int index = 0;
         int[] input = null;
-           
+        ArrayList<ArrayList<int[]>> start = new ArrayList<>();
+        ArrayList<ArrayList<int[]>> general = new ArrayList<>();
+   
+        
         for(int i = 1; i <= aantal; i++){
-        	result = new HashSet<>();
+        	start = new ArrayList<>();
         	input = R.intArray();
-        	input = solve(input);
-        	print(input);
+        	
+        	start.add(successors(input));
+        	
+        	for(ArrayList<int[]> arl : start){
+        		general.addAll(successors(arl));
+        	}
+        	print(general);
         }
-                
+       
         R.close();
     }
-  
-    private static ArrayList<int[]> successors( int[] cfg ){
+
+    private static ArrayList<int[]> successors( ArrayList<int[]> cfg ){
+    	ArrayList<int[]> list = new ArrayList<>();
+    	for(int[] arr : cfg){
+    		list.addAll( successors(arr) );
+    	}
+    	return list;
+    }
+    
+	private static ArrayList<int[]> successors( int[] cfg ){
     	ArrayList<int[]> succes = new ArrayList<>();
     	int left = -1;
     	int right = -1;
