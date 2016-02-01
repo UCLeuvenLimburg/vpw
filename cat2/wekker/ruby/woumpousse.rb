@@ -10,8 +10,6 @@ def solve(h, m, hh, mm)
     solutions << mm - m + shortest_hours(h, hh)
     solutions << 60 + m - mm + shortest_hours((h - 1 + 24) % 24, hh)
 
-#    puts " #{[h,m,hh,mm]} : #{solutions}"
-
     solutions.min
   else
     solve(hh, mm, h, m)
