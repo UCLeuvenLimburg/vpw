@@ -8,7 +8,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class Main {
-		
+                
     public static void main(String[] args){
         R.open();
                 
@@ -20,102 +20,98 @@ public class Main {
    
         
         for(int i = 1; i <= aantal; i++){
-        	start = new ArrayList<>();
-        	input = R.intArray();
-        	
-        	start.add(successors(input));
-        	
-        	for(ArrayList<int[]> arl : start){
-        		general.addAll(successors(arl));
-        	}
-        	print(general);
+            start = new ArrayList<>();
+            input = R.intArray();
+                
+            start.add(successors(input));
+                
+            for(ArrayList<int[]> arl : start){
+                general.addAll(successors(arl));
+            }
+            print(general);
         }
        
         R.close();
     }
 
     private static ArrayList<int[]> successors( ArrayList<int[]> cfg ){
-    	ArrayList<int[]> list = new ArrayList<>();
-    	for(int[] arr : cfg){
-    		list.addAll( successors(arr) );
-    	}
-    	return list;
+        ArrayList<int[]> list = new ArrayList<>();
+        for(int[] arr : cfg){
+            list.addAll( successors(arr) );
+        }
+        return list;
     }
     
-	private static ArrayList<int[]> successors( int[] cfg ){
-    	ArrayList<int[]> succes = new ArrayList<>();
-    	int left = -1;
-    	int right = -1;
-    	for(int i = 1; i < cfg.length; i++){
-    		left = findLeft(cfg, i);
-    		right = findRight(cfg, i);
-    		if(left != -1){
-    			int[] cfgLCopy = Arrays.copyOf(cfg, cfg.length);
-    			cfgLCopy = jump(left, cfgLCopy, false);
-    			succes.add(cfgLCopy);
-    		}
-    		if(right != -1){
-    			int[] cfgRCopy = Arrays.copyOf(cfg, cfg.length);
-    			cfgRCopy = jump(right, cfgRCopy, true);
-    			succes.add(cfgRCopy);
-    		}
-    	}
-    }  
-
-	private static void print(int[] input) {
-		for(int i = 1; i < input.length; i++){
-			System.out.print(input[i] + " ");
-		}
-	}
+    private static void print(int[] input) {
+        for(int i = 1; i < input.length; i++){
+            System.out.print(input[i] + " ");
+        }
+    }
 
 
-	private static int[] solve(int[] sol) {
-		int x = 0;
-		x = findLeft(sol, 0);
-		sol = jump(x, sol, false);
-		
-		return sol;
-	}
+    private static int[] solve(int[] sol) {
+        int x = 0;
+        x = findLeft(sol, 0);
+        sol = jump(x, sol, false);
+                
+        return sol;
+    }
 
-	private static int[] jump(int x, int[] sol, boolean b) {
-		if(b){
-			sol[x] = 0;
-			sol[x+1] = 0;
-			sol[x+2] = 1;
-			return sol;
-		}else{
-			sol[x] = 1;
-			sol[x+1] = 0;
-			sol[x+2] = 0;
-			return sol;
-		}
-	}
+    private static Set<int[]> successors(int[] configuration)
+    {
+        Set<int[]> result = new HashSet<>();
 
+        for ( int i = 0; i != configuration.length; ++i )
+        {
+            result.addAll( leftJump(configuration, i) );
+            result.addAll( rightJump(configuration, i) );
+        }
 
-	private static int findRight(int[] sol, int k) {
-		for(int i = k; i < sol.length-2; i++){
-			if(sol[i] == 1
-				&& sol[i+1] == 1
-				&& sol[i+2] == 0)
-				
-				return i;
-		}
-		return 0;
-	}
-	
-	private static int findLeft(int[] sol, int k) {
-		for(int i = k; i < sol.length-2; i++){
-			if(sol[i] == 0
-				&& sol[i+1] == 1
-				&& sol[i+2] == 1)
-				
-				return i;
-		}
-		return 0;
-	}
+        return result;
+    }
 
+    private static Set<int[]> leftJump(int[] configuration, int index)
+    {
+        Set<int[]> result = new HashSet<>();
+        
+        if ( index >= 2 && configuration[index - 2] == 0 && configuration[index - 1] == 1 && configuration[index] == 1 )
+        {
+            int[] successor = copy(configuration);
+            
+            successor[index  ] = 0;
+            successor[index-1] = 0;
+            successor[index-2] = 1;
 
-	public static class R {
+            result.add(successor);
+        }
+
+        return result;
+    }
+
+    private static Set<int[]> rightJump(int[] configuration, int index)
+    {
+        Set<int[]> result = new HashSet<>();
+        
+        if ( index + 2 < configuration.length && configuration[index + 2] == 0 && configuration[index + 1] == 1 && configuration[index] == 1 )
+        {
+            int[] successor = copy(configuration);
+            
+            successor[index  ] = 0;
+            successor[index+1] = 0;
+            successor[index+2] = 1;
+
+            result.add(successor);
+        }
+
+        return result;
+    }
+
+    private static int[] copy(int[] xs)
+    {
+        return Arrays.copyOf(xs, xs.length);
+    }
+
+    public static class R {
                 
         private static Scanner scan;
                 
