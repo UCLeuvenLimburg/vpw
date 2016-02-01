@@ -1,0 +1,6 @@
+currentGeneration = { initialConfiguration }
+
+repeat N-1 times
+  currentGeneration = compute all successors of currentGeneration
+  
+find configuration with leftmost stone in currentGeneration
