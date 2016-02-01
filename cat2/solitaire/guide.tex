@@ -145,9 +145,75 @@
 
 \begin{frame}
   \frametitle{Step 1}
-  \begin{itemize}
+  \begin{center}
+    \bf Find a way to recognize where jumps are possible
+  \end{center}
+  \begin{center}
+    \begin{tikzpicture}
+      \configuration{stone,stone,hole,stone,stone,stone,hole}{(0,0)}
+      \draw[-latex] (0.75,0.5) to[bend left=30] ++(1.5,0);
+      \draw[-latex] (3.75,0.5) to[bend left=30] ++(1.5,0);
+      \draw[-latex] (3.75,-0.5) to[bend left=30] ++(-1.5,0);
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
 
-  \end{itemize}
+\begin{frame}
+  \frametitle{Step 2}
+  \begin{center}
+    \bf Find a way to compute the results of a jump
+  \end{center}
+  \begin{center}
+    \begin{tikzpicture}
+      \configuration{stone,stone,hole,stone,stone,stone,hole}{(0,0)}
+      \draw[-latex] (0.75,0.5) to[bend left=30] ++(1.5,0);
+      \node at (3,-1) {gives};
+      \configuration{hole,hole,stone,stone,stone,stone,hole}{(0,-2)}
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Step 3}
+  \begin{center}
+    \bf Find a way to compute all successors of a given configuration
+  \end{center}
+  \begin{center}
+    \begin{tikzpicture}
+      \configuration{stone,stone,hole,stone,stone,stone,hole}{(0,0)}
+      \node at (3,-1) {gives};
+      \configuration{hole,hole,stone,stone,stone,stone,hole}{(0,-2)}
+      \configuration{stone,stone,stone,hole,hole,stone,hole}{(0,-2.75)}
+      \configuration{stone,stone,hole,stone,hole,hole,stone}{(0,-3.5)}
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Step 4}
+  \begin{center}
+    \bf Compute all successors of a set of configurations
+  \end{center}
+  \begin{center}
+    \begin{tikzpicture}
+      \configuration{hole,hole,stone,stone,stone,stone,hole}{(0,0)}
+      \configuration{stone,stone,stone,hole,hole,stone,hole}{(0,-.75)}
+      \configuration{stone,stone,hole,stone,hole,hole,stone}{(0,-1.5)}
+      \node at (3,-2.5) {gives};
+      \configuration{hole,stone,hole,hole,stone,stone,hole}{(0,-3.5)}
+      \configuration{hole,hole,stone,stone,hole,hole,stone}{(0,-4.25)}
+      \configuration{stone,hole,hole,stone,hole,stone,hole}{(0,-5)}
+      \configuration{hole,hole,stone,stone,hole,hole,stone}{(0,-5.75)}
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Step 5}
+  \begin{center}
+    \bf Do this to {\tt \{ initialConfiguration \}} $N-1$ times,
+    where $N$ is the number of stones in {\tt initialConfiguration}
+  \end{center}
 \end{frame}
 
 \end{document}
