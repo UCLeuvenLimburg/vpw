@@ -28,6 +28,25 @@ public class Main {
         R.close();
     }
   
+    private static ArrayList<int[]> successors( int[] cfg ){
+    	ArrayList<int[]> succes = new ArrayList<>();
+    	int left = -1;
+    	int right = -1;
+    	for(int i = 1; i < cfg.length; i++){
+    		left = findLeft(cfg, i);
+    		right = findRight(cfg, i);
+    		if(left != -1){
+    			int[] cfgLCopy = Arrays.copyOf(cfg, cfg.length);
+    			cfgLCopy = jump(left, cfgLCopy, false);
+    			succes.add(cfgLCopy);
+    		}
+    		if(right != -1){
+    			int[] cfgRCopy = Arrays.copyOf(cfg, cfg.length);
+    			cfgRCopy = jump(right, cfgRCopy, true);
+    			succes.add(cfgRCopy);
+    		}
+    	}
+    }  
 
 	private static void print(int[] input) {
 		for(int i = 1; i < input.length; i++){
@@ -148,4 +167,3 @@ public class Main {
         }
     }
 }
-
