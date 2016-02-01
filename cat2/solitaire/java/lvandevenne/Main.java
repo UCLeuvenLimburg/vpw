@@ -1,8 +1,9 @@
-//package domain;
+package domain;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -15,49 +16,36 @@ public class Main {
         int aantal = R.integer();
         int index = 0;
         int[] input = null;
-        ArrayList<ArrayList<int[]>> start = new ArrayList<>();
-        ArrayList<ArrayList<int[]>> general = new ArrayList<>();
-   
+        
+        Set<Set<int[]>> allJumps = new HashSet<>();
         
         for(int i = 1; i <= aantal; i++){
-            start = new ArrayList<>();
             input = R.intArray();
-                
-            start.add(successors(input));
-                
-            for(ArrayList<int[]> arl : start){
-                general.addAll(successors(arl));
-            }
-            print(general);
+            allJumps.add( successors(input) );
+            print(allJumps);
         }
        
         R.close();
     }
-
-    private static ArrayList<int[]> successors( ArrayList<int[]> cfg ){
-        ArrayList<int[]> list = new ArrayList<>();
-        for(int[] arr : cfg){
-            list.addAll( successors(arr) );
-        }
-        return list;
-    }
     
-    private static void print(int[] input) {
-        for(int i = 1; i < input.length; i++){
-            System.out.print(input[i] + " ");
-        }
+    private static void print(Set<Set<int[]>> successors) {
+       Iterator<Set<int[]>> runner = successors.iterator();
+       Set<int[]> s = null;
+       int[] arr = null;
+       while(runner.hasNext()){
+    	   s = runner.next();
+    	   Iterator<int[]> subRunner = s.iterator();
+    	   while(subRunner.hasNext()){
+    		   arr = subRunner.next();
+    		   for(int i = 0; i < arr.length; i++){
+    			   System.out.print(arr[i]);
+    		   }
+    		   System.out.println();
+    	   }
+       }
     }
 
-
-    private static int[] solve(int[] sol) {
-        int x = 0;
-        x = findLeft(sol, 0);
-        sol = jump(x, sol, false);
-                
-        return sol;
-    }
-
-    private static Set<int[]> successors(int[] configuration)
+	private static Set<int[]> successors(int[] configuration)
     {
         Set<int[]> result = new HashSet<>();
 
