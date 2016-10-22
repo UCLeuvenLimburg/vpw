@@ -5,7 +5,7 @@ def readint():
     return int(input())
 
 def readints():
-    return map(int, input().split())
+    return [ int(token) for token in input().split() ]
 
 Emmer = recordclass('Emmer', 'inhoud capaciteit')
 
