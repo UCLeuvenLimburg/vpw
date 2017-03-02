@@ -1,3 +1,5 @@
+import array
+
 def solve(ns):
     leftmost = float('Inf')
     length = len(ns)
@@ -126,12 +128,22 @@ def solve4(ns):
     indices = list(range(length))
     n_stones = len( [ 1 for n in ns if n ] )
 
-    stack = [ None for i in range(n_stones) ]
-    stack[0] = (n_stones, 0, -1, False)
+    stones_left_stack = [ None for i in range(n_stones) ]
+    index_stack = [ None for i in range(n_stones) ]
+    direction_stack = [ None for i in range(n_stones) ]
+    done_stack = [ None for i in range(n_stones) ]
+
+    stones_left_stack[0] = n_stones
+    index_stack[0] = 0
+    direction_stack[0] = -1
+    done_stack[0] = False
     si = 0
 
     while si >= 0:
-        n_stones, index, direction, done = stack[si]
+        n_stones = stones_left_stack[si]
+        index = index_stack[si]
+        direction = direction_stack[si]
+        done = done_stack[si]
 
         if not done:
             if n_stones == 1:
@@ -139,8 +151,7 @@ def solve4(ns):
                 si -= 1
 
                 if si >= 0:
-                    n_stones, index, direction, done = stack[si]
-                    stack[si] = (n_stones, index, direction, True)
+                    done_stack[si] = True
                 else:
                     return leftmost
 
@@ -149,8 +160,7 @@ def solve4(ns):
                     si -= 1
 
                     if si >= 0:
-                        n_stones, index, direction, done = stack[si]
-                        stack[si] = (n_stones, index, direction, True)
+                        done_stack[si] = True
                     else:
                         return leftmost
                         
@@ -160,9 +170,15 @@ def solve4(ns):
                         ns[index-1] = False
                         ns[index-2] = True
                         si += 1
-                        stack[si] = (n_stones - 1, 0, -1, False)
+                        stones_left_stack[si] = n_stones - 1
+                        index_stack[si] = 0
+                        direction_stack[si] = -1
+                        done_stack[si] = False
                     else:
-                        stack[si] = (n_stones, index, 1, False)
+                        stones_left_stack[si] = n_stones
+                        index_stack[si] = index
+                        direction_stack[si] = 1
+                        done_stack[si] = False
 
                 else:
                     if index + 2 < length and ns[index] and ns[index+1] and not ns[index+2]:
@@ -170,9 +186,15 @@ def solve4(ns):
                         ns[index+1] = False
                         ns[index+2] = True
                         si += 1
-                        stack[si] = (n_stones - 1, 0, -1, False)
+                        stones_left_stack[si] = n_stones - 1
+                        index_stack[si] = 0
+                        direction_stack[si] = -1
+                        done_stack[si] = False
                     else:
-                        stack[si] = (n_stones, index + 1, -1, False)
+                        stones_left_stack[si] = n_stones
+                        index_stack[si] = index + 1
+                        direction_stack[si] = -1
+                        done_stack[si] = False
         else:
             si -= 1
 
@@ -182,14 +204,18 @@ def solve4(ns):
             
             if direction == -1:
                 si += 1
-                stack[si] = (n_stones, index, 1, False)
+                stones_left_stack[si] = n_stones
+                index_stack[si] = index
+                direction_stack[si] = 1
+                done_stack[si] = False
             elif index == length:
-                n_stones, index, direction, done = stack[si]
-                stack[si] = (n_stones, index, direction, True)
+                done_stack[si] = True
             else:
                 si += 1
-                stack[si] = (n_stones, index+1, -1, False)
-
+                stones_left_stack[si] = n_stones
+                index_stack[si] = index + 1
+                direction_stack[si] = -1
+                done_stack[si] = False
 
     return leftmost
 
