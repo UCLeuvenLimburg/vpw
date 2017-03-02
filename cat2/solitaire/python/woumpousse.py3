@@ -125,30 +125,32 @@ def solve4(ns):
     length = len(ns)
     indices = list(range(length))
     n_stones = len( [ 1 for n in ns if n ] )
-    
-    stack = [ (n_stones, 0, -1, False) ]
 
-    while stack:
-        n_stones, index, direction, done = stack[-1]
+    stack = [ None for i in range(n_stones) ]
+    stack[0] = (n_stones, 0, -1, False)
+    si = 0
+
+    while si >= 0:
+        n_stones, index, direction, done = stack[si]
 
         if not done:
             if n_stones == 1:
                 leftmost = min(leftmost, next(i for i in range(length) if ns[i]))
-                stack.pop()
+                si -= 1
 
-                if stack:
-                    n_stones, index, direction, done = stack.pop()
-                    stack.append((n_stones, index, direction, True))
+                if si >= 0:
+                    n_stones, index, direction, done = stack[si]
+                    stack[si] = (n_stones, index, direction, True)
                 else:
                     return leftmost
 
             else:
                 if index == length:
-                    stack.pop()
+                    si -= 1
 
-                    if stack:
-                        n_stones, index, direction, done = stack.pop()
-                        stack.append( (n_stones, index, direction, True) )
+                    if si >= 0:
+                        n_stones, index, direction, done = stack[si]
+                        stack[si] = (n_stones, index, direction, True)
                     else:
                         return leftmost
                         
@@ -157,34 +159,36 @@ def solve4(ns):
                         ns[index] = False
                         ns[index-1] = False
                         ns[index-2] = True
-                        stack.append( (n_stones - 1, 0, -1, False) )
+                        si += 1
+                        stack[si] = (n_stones - 1, 0, -1, False)
                     else:
-                        stack.pop()
-                        stack.append( (n_stones, index, 1, False) )
+                        stack[si] = (n_stones, index, 1, False)
 
                 else:
                     if index + 2 < length and ns[index] and ns[index+1] and not ns[index+2]:
                         ns[index] = False
                         ns[index+1] = False
                         ns[index+2] = True
-                        stack.append( (n_stones - 1, 0, -1, False) )
+                        si += 1
+                        stack[si] = (n_stones - 1, 0, -1, False)
                     else:
-                        stack.pop()
-                        stack.append( (n_stones, index + 1, -1, False) )
+                        stack[si] = (n_stones, index + 1, -1, False)
         else:
-            stack.pop()
+            si -= 1
 
             ns[index] = True
             ns[index + direction] = True
             ns[index + 2 * direction] = False
             
             if direction == -1:
-                stack.append( (n_stones, index, 1, False) )
+                si += 1
+                stack[si] = (n_stones, index, 1, False)
             elif index == length:
-                n_stones, index, direction, done = stack.pop()
-                stack.append( (n_stones, index, direction, True) )
+                n_stones, index, direction, done = stack[si]
+                stack[si] = (n_stones, index, direction, True)
             else:
-                stack.append( (n_stones, index+1, -1, False) )
+                si += 1
+                stack[si] = (n_stones, index+1, -1, False)
 
 
     return leftmost
