@@ -1,9 +1,10 @@
 from array import array
 
-def solve(ns):
+def solve(ns):    
     leftmost = float('Inf')
     length = len(ns)
     indices = list(range(length))
+    visited = set()
 
     def jump_left(n, i):
         if i > 1 and ns[i] and ns[i-1] and not ns[i-2]:
@@ -27,16 +28,23 @@ def solve(ns):
     
     def jump(n):
         nonlocal leftmost
-        if n > 1:
-            for i in indices:
-                jump_left(n, i)
-                jump_right(n, i)
+        nonlocal visited
 
-        else:
-            leftmost = min(leftmost, next(i for i in range(length) if ns[i]))
+        t = tuple(ns)
 
-            if leftmost == 0:
-                raise RuntimeError()
+        if t not in visited:
+            visited.add(t)
+            
+            if n > 1:
+                for i in indices:
+                    jump_left(n, i)
+                    jump_right(n, i)
+
+            else:
+                leftmost = min(leftmost, next(i for i in range(length) if ns[i]))
+
+                if leftmost == 0:
+                    raise RuntimeError()
     
     n = len([ 1 for n in ns if n ])    
             
@@ -45,390 +53,15 @@ def solve(ns):
     except RuntimeError:
         pass
     
-    return leftmost
-
-
-def solve2(ns):
-    leftmost = float('Inf')
-    length = len(ns)
-    indices = list(range(length))
-    
-    def jump(n):
-        nonlocal leftmost
-        if n > 1:
-            for i in indices:
-                if i > 1 and ns[i] and ns[i-1] and not ns[i-2]:
-                    ns[i] = False
-                    ns[i-1] = False
-                    ns[i-2] = True
-                    jump(n - 1)
-                    ns[i] = True
-                    ns[i-1] = True
-                    ns[i-2] = False
-
-                if i + 2 < length and ns[i] and ns[i+1] and not ns[i+2]:
-                    ns[i] = False
-                    ns[i+1] = False
-                    ns[i+2] = True
-                    jump(n - 1)
-                    ns[i] = True
-                    ns[i+1] = True
-                    ns[i+2] = False
-
-        else:
-            leftmost = min(leftmost, next(i for i in range(length) if ns[i]))
-
-            if leftmost == 0:
-                raise RuntimeError()
-    
-    n = len([ 1 for n in ns if n ])    
-            
-    try:
-        jump(n)
-    except RuntimeError:
-        pass
-    
-    return leftmost
-
-
-def solve3(ns):
-    leftmost = float('Inf')
-    length = len(ns)
-    indices = list(range(length))
-    
-    queue = [ ns ]
-
-    while queue:
-        ns = queue[-1]
-        del queue[-1]
-
-        if sum(ns) > 1:        
-            for i in indices:
-                if i > 1 and ns[i] and ns[i-1] and not ns[i-2]:
-                    ms = list(ns)
-                    ms[i] = False
-                    ms[i-1] = False
-                    ms[i-2] = True
-                    queue.append(ms)
-
-                if i + 2 < length and ns[i] and ns[i+1] and not ns[i+2]:
-                    ms = list(ns)
-                    ms[i] = False
-                    ms[i+1] = False
-                    ms[i+2] = True
-                    queue.append(ms)
-
-        else:
-            leftmost = min(leftmost, next(i for i in range(length) if ns[i]))
-
-    return leftmost
-
-def solve4(ns):
-    leftmost = float('Inf')
-    length = len(ns)
-    indices = list(range(length))
-    n_stones = len( [ 1 for n in ns if n ] )
-
-    stones_left_stack = [ None for i in range(n_stones) ]
-    index_stack = [ None for i in range(n_stones) ]
-    direction_stack = [ None for i in range(n_stones) ]
-    done_stack = [ None for i in range(n_stones) ]
-
-    stones_left_stack[0] = n_stones
-    index_stack[0] = 0
-    direction_stack[0] = -1
-    done_stack[0] = False
-    si = 0
-
-    while si >= 0:
-        n_stones = stones_left_stack[si]
-        index = index_stack[si]
-        direction = direction_stack[si]
-        done = done_stack[si]
-
-        if not done:
-            if n_stones == 1:
-                leftmost = min(leftmost, next(i for i in range(length) if ns[i]))
-                si -= 1
-
-                if si >= 0:
-                    done_stack[si] = True
-                else:
-                    return leftmost
-
-            else:
-                if index == length:
-                    si -= 1
-
-                    if si >= 0:
-                        done_stack[si] = True
-                    else:
-                        return leftmost
-                        
-                elif direction == -1:
-                    if index >= 2 and ns[index] and ns[index-1] and not ns[index-2]:
-                        ns[index] = False
-                        ns[index-1] = False
-                        ns[index-2] = True
-                        si += 1
-                        stones_left_stack[si] = n_stones - 1
-                        index_stack[si] = 0
-                        direction_stack[si] = -1
-                        done_stack[si] = False
-                    else:
-                        stones_left_stack[si] = n_stones
-                        index_stack[si] = index
-                        direction_stack[si] = 1
-                        done_stack[si] = False
-
-                else:
-                    if index + 2 < length and ns[index] and ns[index+1] and not ns[index+2]:
-                        ns[index] = False
-                        ns[index+1] = False
-                        ns[index+2] = True
-                        si += 1
-                        stones_left_stack[si] = n_stones - 1
-                        index_stack[si] = 0
-                        direction_stack[si] = -1
-                        done_stack[si] = False
-                    else:
-                        stones_left_stack[si] = n_stones
-                        index_stack[si] = index + 1
-                        direction_stack[si] = -1
-                        done_stack[si] = False
-        else:
-            si -= 1
-
-            ns[index] = True
-            ns[index + direction] = True
-            ns[index + 2 * direction] = False
-            
-            if direction == -1:
-                si += 1
-                stones_left_stack[si] = n_stones
-                index_stack[si] = index
-                direction_stack[si] = 1
-                done_stack[si] = False
-            elif index == length:
-                done_stack[si] = True
-            else:
-                si += 1
-                stones_left_stack[si] = n_stones
-                index_stack[si] = index + 1
-                direction_stack[si] = -1
-                done_stack[si] = False
-
-    return leftmost
-
-def solve5(ns):
-    leftmost = float('Inf')
-    length = len(ns)
-    indices = list(range(length))
-    n_stones = len( [ 1 for n in ns if n ] )
-
-    stones_left_stack = array('i', [ 0 for i in range(n_stones) ])
-    index_stack = array('i', [ 0 for i in range(n_stones) ])
-    direction_stack = array('i', [ 0 for i in range(n_stones) ])
-    done_stack = array('i', [ 0 for i in range(n_stones) ])
-
-    stones_left_stack[0] = n_stones
-    index_stack[0] = 0
-    direction_stack[0] = -1
-    done_stack[0] = 0
-    si = 0
-
-    while si >= 0:
-        n_stones = stones_left_stack[si]
-        index = index_stack[si]
-        direction = direction_stack[si]
-        done = done_stack[si] == 1
-
-        if not done:
-            if n_stones == 1:
-                leftmost = min(leftmost, next(i for i in range(length) if ns[i]))
-                si -= 1
-
-                if si >= 0:
-                    done_stack[si] = 1
-                else:
-                    return leftmost
-
-            else:
-                if index == length:
-                    si -= 1
-
-                    if si >= 0:
-                        done_stack[si] = 1
-                    else:
-                        return leftmost
-                        
-                elif direction == -1:
-                    if index >= 2 and ns[index] and ns[index-1] and not ns[index-2]:
-                        ns[index] = False
-                        ns[index-1] = False
-                        ns[index-2] = True
-                        si += 1
-                        stones_left_stack[si] = n_stones - 1
-                        index_stack[si] = 0
-                        direction_stack[si] = -1
-                        done_stack[si] = 0
-                    else:
-                        stones_left_stack[si] = n_stones
-                        index_stack[si] = index
-                        direction_stack[si] = 1
-                        done_stack[si] = 0
-
-                else:
-                    if index + 2 < length and ns[index] and ns[index+1] and not ns[index+2]:
-                        ns[index] = False
-                        ns[index+1] = False
-                        ns[index+2] = True
-                        si += 1
-                        stones_left_stack[si] = n_stones - 1
-                        index_stack[si] = 0
-                        direction_stack[si] = -1
-                        done_stack[si] = 0
-                    else:
-                        stones_left_stack[si] = n_stones
-                        index_stack[si] = index + 1
-                        direction_stack[si] = -1
-                        done_stack[si] = 0
-        else:
-            si -= 1
-
-            ns[index] = True
-            ns[index + direction] = True
-            ns[index + 2 * direction] = False
-            
-            if direction == -1:
-                si += 1
-                stones_left_stack[si] = n_stones
-                index_stack[si] = index
-                direction_stack[si] = 1
-                done_stack[si] = 0
-            elif index == length:
-                done_stack[si] = 1
-            else:
-                si += 1
-                stones_left_stack[si] = n_stones
-                index_stack[si] = index + 1
-                direction_stack[si] = -1
-                done_stack[si] = 0
-
-    return leftmost
-
-
-def solve6(init):
-    leftmost = float('Inf')
-    length = len(init)
-    indices = list(range(length))
-    n_stones = len( [ 1 for n in init if n ] )
-
-    ns = array('i', [ 1 if n else 0 for n in init ])
-    stones_left_stack = array('i', [ 0 for i in range(n_stones) ])
-    index_stack = array('i', [ 0 for i in range(n_stones) ])
-    direction_stack = array('i', [ 0 for i in range(n_stones) ])
-    done_stack = array('i', [ 0 for i in range(n_stones) ])
-
-    stones_left_stack[0] = n_stones
-    index_stack[0] = 0
-    direction_stack[0] = -1
-    done_stack[0] = 0
-    si = 0
-
-    while si >= 0:
-        n_stones = stones_left_stack[si]
-        index = index_stack[si]
-        direction = direction_stack[si]
-        done = done_stack[si] == 1
-
-        if not done:
-            if n_stones == 1:
-                j = 0
-                while ns[j] == 0:
-                    j += 1
-
-                if j < leftmost:
-                    leftmost = j
-
-                si -= 1
-
-                if si >= 0:
-                    done_stack[si] = 1
-                else:
-                    return leftmost
-
-            else:
-                if index == length:
-                    si -= 1
-
-                    if si >= 0:
-                        done_stack[si] = 1
-                    else:
-                        return leftmost
-                        
-                elif direction == -1:
-                    if index >= 2 and ns[index] == 1 and ns[index-1] == 1 and ns[index-2] == 0:
-                        ns[index] = 0
-                        ns[index-1] = 0
-                        ns[index-2] = 1
-                        si += 1
-                        stones_left_stack[si] = n_stones - 1
-                        index_stack[si] = 0
-                        direction_stack[si] = -1
-                        done_stack[si] = 0
-                    else:
-                        stones_left_stack[si] = n_stones
-                        index_stack[si] = index
-                        direction_stack[si] = 1
-                        done_stack[si] = 0
-
-                else:
-                    if index + 2 < length and ns[index] == 1 and ns[index+1] == 1 and ns[index+2] == 0:
-                        ns[index] = 0
-                        ns[index+1] = 0
-                        ns[index+2] = 1
-                        si += 1
-                        stones_left_stack[si] = n_stones - 1
-                        index_stack[si] = 0
-                        direction_stack[si] = -1
-                        done_stack[si] = 0
-                    else:
-                        stones_left_stack[si] = n_stones
-                        index_stack[si] = index + 1
-                        direction_stack[si] = -1
-                        done_stack[si] = 0
-        else:
-            si -= 1
-
-            ns[index] = 1
-            ns[index + direction] = 1
-            ns[index + 2 * direction] = 0
-            
-            if direction == -1:
-                si += 1
-                stones_left_stack[si] = n_stones
-                index_stack[si] = index
-                direction_stack[si] = 1
-                done_stack[si] = 0
-            elif index == length:
-                done_stack[si] = 1
-            else:
-                si += 1
-                stones_left_stack[si] = n_stones
-                index_stack[si] = index + 1
-                direction_stack[si] = -1
-                done_stack[si] = 0
-
     return leftmost
 
 
 def main():
     n = int(input())
 
-    for index in range(1, 90):
+    for index in range(1, n + 1):
         ns = [ n == '1' for n in input().split(' ')[1:] ]
-        result = solve6(ns)
+        result = solve(ns)
 
         if result == float('inf'):
             result = 'ONMOGELIJK'
