@@ -1,23 +1,39 @@
-# General Hints and Tips
-* You can only submit one file at a time. In Java, this means that if you need to work with multiple classes, you will have to make them [nested classes](https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html).
-* Writing text to a file/console is relatively slow and it is more efficient to output large blocks of text instead of single characters one at a time. For this reason, it often happens that your output gets stored in a temporary buffer (*caching*), which will get "flushed" only when enough data has been accumulated. This can be a problem at the contest: the server imposes a time limit, and after N seconds it kills the process running your code. This means your program does not get the chance to flush its output. If you are in a situation where the server tells you your program timed out and did not output anything, the caching is the most likely culprit. To remedy this, you need to *flush* your output. For example, in Java, you can write [`System.out.flush()`](https://docs.oracle.com/javase/7/docs/api/java/io/OutputStream.html#flush()) to force output to be written.
-* For each VPW problem, there are three IOs: the assignment text IO, the example IO and the contest IO.
-    - The assignment text IO is given to you on paper and often counts only one or two example cases
-    - The example IO resides on the submission server. When you submit your code, it is fed first to your code and the output is verified. The full results of this verification are shown to you, which means you get to see what the example input and output looks like, together with what your own program has produced as results.
-    - The contest IO also resides on the submission server. This IO determines your score. You do NOT get to see the inputs, the outputs or the results of your own program. You only get to see a score expressed in percentage.
-* Each solution can grant you 150 points. If you solve p% of the problems correctly, with p < 100, you get p points. If you solve all problems correctly, you get 150 points. This means you get a bonus 50 points for being able to solve all problems correctly.
-* The server imposes a time limit on your code. This time limit seems to change from year to year and fluctuates around 10 seconds. Cat-1 and cat-2 problems are generally not difficult to solve within the time limit: the focus lies on the correctness of the results. For cat-3 and cat-4 problems it is often necessary to find an efficient solution. Inputs can become quite large so as to check that your algorithms have have a certain time complexity.
+# How Does The Contest Work?
 
-Instructions
-1. Fork this repository using Bitbucket's web interface
-2. Clone your fork, this copies all data to your local machine. **git clone https://*yourlogin*@bitbucket.org/*yourlogin*/ucll-vpw.**
-3. In your local repository, create a new branch. **git branch *mybranch* **
-4. Switch to this branch. **git checkout *mybranch* **
-5. Tell git you want this local branch to also exist in the remote repository. **get branch -u origin/*mybranch* **
-6. Write solution to some problem
-7. Add the files to the staging area. **git add *file1* *file2* ...**
-8. Commit the files to the local repository. **git commit -m "*Commit message*"**
-9. Synchronize your local repository with your remote repository. **git push**
-10. Using Bitbucket's web interface, go to this repository, create a pull request, and ask for your branch *yourlogin*/*mybranch* to be merged with fvogels/master
-11. Wait for your pull request to be accepted.
-12. Your work has been immortalized. Eternal glory and fame to you.
+There are 4 categories:
+
+* Cat1: high school students
+* Cat2: professional bachelor (you)
+* Cat3: academic bachelor
+* Cat4: everybody else (master, graduated, ...)
+
+The rules are:
+
+* There are five problems (algorithmic in nature) you need to try to solve in 3 hours.
+* Teams must count three members.
+* Each team can only use one laptop.
+* You can use (almost) any programming language (Java, Python, C++, C#, ...)
+* You can solve each problem in a different language, or use the same language for all, etc.
+* For each problem, you are given input data and expected output data (`voorbeeld.invoer` and `voorbeeld.uitvoer` respectively.) Your solver is expected to read the input data from STDIN and write its output to STDOUT (more details on the technical details later.)
+* When your solver producing the correct output, you can upload it to the contest servers. These contain more input/output, which remains hidden to you. Your submission will be queued for evaluation. A minute or so later, you'll get feedback on how your solver performed.
+* If your solver can solve `p`% of the cases correctly, you get `p` points. If it solves 100%, you get 150 points.
+* The server imposes a time limit on your code. This time limit seems to change from year to year and fluctuates around 30 seconds. Cat-1 and cat-2 problems are generally not difficult to solve within the time limit: the focus lies on the correctness of the results. For cat-3 and cat-4 problems it is often necessary to find an efficient solution. Inputs can become quite large so as to check that your algorithms have have a certain time complexity.
+
+
+# Repo Usage
+
+Simply clone the repository: `git clone https://bitbucket.org/fvogels/ucll-vpw`
+
+If you wish to upload your own solutions, you'll need to ask for write access.
+
+# General Hints and Tips
+
+* Writing text to a file/console is relatively slow and it is more efficient to output large blocks of text instead of single characters one at a time. For this reason, it often happens that your output gets stored in a temporary buffer (*caching*), which will get "flushed" only when enough data has been accumulated. This can be a problem at the contest: the server imposes a time limit, and after N seconds it kills the process running your code. This means your program does not get the chance to flush its output. If you are in a situation where the server tells you your program timed out and did not output anything, the caching is the most likely culprit. To remedy this, you need to *flush* your output.
+* It might be advisable that you use a programming language that all three members know.
+* Develop some small libraries, e.g., functions specialized in reading data from STDIN.
+
+
+# Java-specific hints
+
+* You can only submit one file at a time. In Java, this means that if you need to work with multiple classes, you will have to make them [nested classes](https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html).
+* Use [`System.out.flush()`](https://docs.oracle.com/javase/7/docs/api/java/io/OutputStream.html#flush()) to force output to be written.
