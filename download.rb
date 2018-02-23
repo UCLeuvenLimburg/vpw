@@ -26,7 +26,7 @@ def download_problem(subdirectory, url)
 
     puts "#{source} -> #{target}"
     open(source) do |source|
-      open(target, 'w') do |target|
+      open(target, 'wb') do |target|
         target.write(source.read)
       end
     end
