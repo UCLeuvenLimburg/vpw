@@ -58,4 +58,4 @@ def download(base_url)
 end
 
 
-download('https://www.vlaamseprogrammeerwedstrijd.be/current/opgaven/2017/')
+download('https://www.vlaamseprogrammeerwedstrijd.be/current/opgaven/2018/')
