@@ -1,6 +1,5 @@
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-
 class InfiniteString:
     def __len__(self):
         return 99999
@@ -34,24 +33,26 @@ def shortest(strings):
 def solve(s1, s2):
     table = {}
 
-    def compute(i, s1, s2, acc):
+    def compute(i, s1, s2):
         if not s1:
-            return acc
+            return ''
         elif s1[0] == s2[0]:
-            return aux(i + 1, s1[1:], s2[1:], acc)
+            return aux(i + 1, s1[1:], s2[1:])
         else:
-            indices = [ i for i in range(1, len(s1)) if s1[i] != s2[i] ]
+            indices = [ i for i in range(1, len(s1)) if s1[i] == s2[0] and s1[i] != s2[i] ]
+            choices = [ code(i, i + j) + aux(i + 1, swap(s1, 0, j)[1:], s2[1:]) for j in indices ]
 
-            return shortest( [ aux(i + 1, swap(s1, 0, j)[1:], s2[1:], acc + code(i, i + j)) for j in indices ] )
+            return shortest( choices )
 
-
-    def aux(i, s1, s2, acc):
+    def aux(i, s1, s2):
+        nonlocal table
+        
         if not (s1, s2) in table:
-            table[(s1, s2)] = compute(i, s1, s2, acc)
+            table[(s1, s2)] = compute(i, s1, s2)
 
         return table[(s1, s2)]
 
-    return aux(0, s1, s2, "")
+    return aux(0, s1, s2)
 
 
 n = int(input())
