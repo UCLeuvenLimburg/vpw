@@ -1,29 +1,8 @@
 import cProfile
-import functools
 
 
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 inverse_alphabet = { alphabet[i] : i for i in range(len(alphabet)) }
-
-def partition(xs, pivot, pred):
-    left = []
-    right = []
-
-    for x in xs:
-        if pred(x, pivot):
-            left.append(x)
-        else:
-            right.append(x)
-
-    return (left, right)
-
-def quicksort(xs, pred):
-    if len(xs) < 2:
-        return xs
-    else:
-        left, right = partition(xs[1:], xs[0], pred)
-
-        return quicksort(left, pred) + [xs[0]] + quicksort(right, pred)
 
 
 class InfiniteString:
@@ -67,7 +46,6 @@ def better(t1, t2):
     else:
         return t1.delta < t2.delta
 
-# @total_ordering
 class Triplet:
     def __init__(self, s1, s2, delta):
         prefix_length = common_prefix_length(s1, s2)
@@ -115,7 +93,6 @@ def solve(string1, string2):
 
     while queue:
         current = queue.pop()
-        # print(current.delta)
 
         if current.s1 == '':
             return current.delta
@@ -125,10 +102,6 @@ def solve(string1, string2):
                 s2 = current.s2
                 delta = current.delta + code(len(string1) - len(s1), len(string1) - len(s1) + i)
                 queue.append(Triplet(s1, s2, delta))
-
-            # print(f"queue size = {len(queue)}")
-            # queue = quicksort(queue, better)
-            # queue.reverse()
 
             queue.sort()
 
@@ -182,6 +155,3 @@ go()
 # a = 'LLLSRRRRRLLRSSRLLSS'
 # b = 'LLRSSRRLRLLRSRSLLSR'
 # print(solve(a, b))
-
-
-# print(quicksort([1,3,5,7,9,8,4,6,2], lambda x, y: x <= y))
