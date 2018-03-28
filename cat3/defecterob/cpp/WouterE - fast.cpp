@@ -64,9 +64,13 @@ string solve(string fout, string correct) {
 
 			for (unsigned j = 0; j < correct.size(); j++) {
 				if (fout.at(j) != correct.at(j)) {
+					string fout_tmp(fout);
+					swap(fout_tmp.at(i), fout_tmp.at(j));
+					int cycle_2_tmp = 0, cycle_3_tmp = 0;
+					count_switches(fout_tmp, correct, cycle_2_tmp, cycle_3_tmp);
 
-					//Geef de voorste tekens voorrang zelfs al zetten we maar 1 teken juist, maar enkel als we dit nog mogen (cycle_3 > 0)
-					if (cycle_3 > 0 && ((fout.at(i) == correct.at(j)) != (fout.at(j) == correct.at(i)))) {
+					//Geef de voorste tekens voorrang zelfs al zetten we maar 1 teken juist, maar enkel als we hiermee de situatie beter maken
+					if (cycle_3_tmp < cycle_3 && cycle_3 > 0 && ((fout.at(i) == correct.at(j)) != (fout.at(j) == correct.at(i)))) {
 						swap(fout.at(i), fout.at(j));
 						cycle_3--;
 

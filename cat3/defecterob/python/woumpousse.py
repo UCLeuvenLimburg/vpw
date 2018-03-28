@@ -1,3 +1,6 @@
+import cProfile
+
+
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 inverse_alphabet = { alphabet[i] : i for i in range(len(alphabet)) }
 
@@ -29,6 +32,20 @@ def common_prefix_length(s1, s2):
     return first(lambda i: s1[i] != s2[i], range(0, len(s1)), len(s1))
 
 
+def ndiffs(x, y):
+    return sum(1 for i in range(len(x)) if x[i] != y[i])
+
+def better(t1, t2):
+    h1 = len(t1.delta) + ndiffs(t1.s1, t1.s2)
+    h2 = len(t2.delta) + ndiffs(t2.s1, t2.s2)
+
+    if h1 < h2:
+        return True
+    elif h1 > h2:
+        return False
+    else:
+        return t1.delta < t2.delta
+
 class Triplet:
     def __init__(self, s1, s2, delta):
         prefix_length = common_prefix_length(s1, s2)
@@ -36,7 +53,9 @@ class Triplet:
         self.s1 = s1[prefix_length:]
         self.s2 = s2[prefix_length:]
         self.delta = delta
-        self.score = 'Z' * sum(1 for i in range(len(self.s1)) if self.s1[i] != self.s2[i]) + delta
+
+    def __lt__(self, other):
+        return better(other, self)
 
     
 def swap(s, i, j):
@@ -84,7 +103,7 @@ def solve(string1, string2):
                 delta = current.delta + code(len(string1) - len(s1), len(string1) - len(s1) + i)
                 queue.append(Triplet(s1, s2, delta))
 
-            queue.sort(key=lambda x: x.score, reverse=True)
+            queue.sort()
 
     return 'onmogelijk'
 
@@ -128,6 +147,8 @@ def go():
 
         print("{} {}".format(index, solution), flush=True)
 
+
+# cProfile.run('go()')
 
 go()
 
