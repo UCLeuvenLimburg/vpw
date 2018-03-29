@@ -31,7 +31,3 @@ for index in range(1, n+1):
     solution = sum( winnings(winning, extra, set(map(int, input().split()))) for _ in range(n) )
 
     print(f"{index} {solution}")
-    
-
-    
-    
