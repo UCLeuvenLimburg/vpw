@@ -1,26 +1,21 @@
 #include <iostream>
 #include <string>
-#include <algorithm>
 
 using namespace std;
 
-bool star(char c) {
-	return c == '*';
-}
-
 bool correct(string slinger) {
-	int a = find_if(slinger.begin(), slinger.end(), star) - slinger.begin();
-	if (a == slinger.size()) return false;
-	int b = find_if(slinger.begin() + a + 1, slinger.end(), star) - slinger.begin();
-	if (b == slinger.size()) return false;
+	size_t a = slinger.find('*');
+	if (a >= slinger.size()) return false;
+	size_t b = slinger.find('*', a + 1);
+	if (b >= slinger.size()) return false;
 
-	int dt = b - a;
+	size_t dt = b - a;
 	if (a >= dt) return false;
 
 	while (b < slinger.size()) {
 		if (b - a != dt) return false;
 		a = b;
-		b = find_if(slinger.begin() + a + 1, slinger.end(), star) - slinger.begin();
+		b = slinger.find('*', a + 1);
 	}
 
 	return (slinger.size() - 1 - a) < dt;
