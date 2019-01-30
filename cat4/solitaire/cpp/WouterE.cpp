@@ -26,7 +26,7 @@ int solve(int64_t field) {
 	}) {
 		for (int i = 1; i < max_length - 1; i++) {
 			if (jumps & (1LL << i)) {
-				min = std::min(min, solve(field ^ (1LL << (i - 1)) ^ (1LL << (i + 0)) ^ (1LL << (i + 1))));
+				min = std::min(min, solve(field ^ (7LL << (i - 1))));
 			}
 		}
 	}

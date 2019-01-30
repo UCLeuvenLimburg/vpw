@@ -19,7 +19,7 @@ bool in(pos p, int type){
 	return true;
 }
 
-int solve() {
+int solve() {								// Breadth-first search
 	set<pos> seen;
 	vector<pos> current, next;
 	current.push_back(start);
