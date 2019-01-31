@@ -1,58 +1,54 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <map>
-#include <set>
+#include <algorithm>
 
 using namespace std;
 
-int inf = 1'000'000'000;
-
-using ll = long long;
-struct ii { int x, y; };
-
-ll max_mask;
-vector<ii> nodes;
-vector<int> minimum_span;
+vector<pair<int, int>> nodes;
 int max_count;
 
 int dist(int a, int b) {
-	return abs(nodes.at(a).x - nodes.at(b).x) + abs(nodes.at(a).y - nodes.at(b).y);
+	return abs(nodes.at(a).first - nodes.at(b).first) + abs(nodes.at(a).second - nodes.at(b).second);
 }
 
-void generate_minimum_span() {
-	for (ll i = 0; i <= max_mask; i++) {
-		map<int, int> todo;
+int minimum_span(int current_node, const vector<bool>& subset, int count) {
+	map<int, int> open;
+	int closest_to_home = current_node;
 
-		for (int j = 0; j < nodes.size() - 1; j++) {
-			if (i & (1LL << j)) todo[j + 1] = inf;
+	for (int j = 0; j < nodes.size() - 1; j++) {
+		if (subset.at(j)) {
+			open[j + 1] = dist(current_node, j + 1);
 		}
-		int food_count = todo.size();
-		todo[0] = 0;
-
-		int cost = food_count;
-		while (todo.size() > 0) {
-			auto it = min_element(todo.begin(), todo.end(), [](auto p1, auto p2) { return p1.second < p2.second; });
-			int node = it->first;
-			cost += it->second;
-			todo.erase(it);
-			for (auto& p : todo) p.second = std::min(p.second, dist(node, p.first));
-		}
-
-		minimum_span.at(food_count) = std::min(minimum_span.at(food_count), cost);
 	}
+
+	int cost = count;
+	for (; count > 0; count--) {
+		auto it = min_element(open.begin(), open.end(), [](auto p1, auto p2) { return p1.second < p2.second; });
+		int node = it->first;
+		cost += it->second;
+		open.erase(it);
+
+		if (dist(0, node) < dist(0, closest_to_home)) closest_to_home = node;
+
+		for (auto& p : open) p.second = min(p.second, dist(node, p.first));
+	}
+
+	return cost + dist(0, closest_to_home);
 }
 
-void solve(int current_node, ll mask, int time_left, int food_count) {	// Brute force with heuristic (~ minimum spanning tree)
-	if (dist(current_node, 0) > time_left) return;
-	if (max_count < food_count) max_count = food_count;
+void solve(int current_node, vector<bool> subset, int time_left, int food_count) {	// Brute force with heuristic (~ minimum spanning tree)
 	if (max_count == nodes.size() - 1) return;
-	if (minimum_span.at(max_count - food_count) > time_left) return;
+	if (minimum_span(current_node, subset, max(0, max_count - food_count)) > time_left) return;
+
+	max_count = max(max_count, food_count);
 
 	for (int next = 0; next < nodes.size() - 1; next++) {
-		if (mask & (1LL << next))
+		if (subset.at(next))
 		{
-			solve(next + 1, mask ^ (1LL << next), time_left - dist(current_node, next + 1) - 1, food_count + 1);
+			subset.at(next).flip();
+			solve(next + 1, subset, time_left - dist(current_node, next + 1) - 1, food_count + 1);
+			subset.at(next).flip();
 		}
 	}
 }
@@ -79,12 +75,8 @@ int main() {
 			}
 		}
 
-		max_mask = (1LL << nodes.size()) - 1LL;
-		minimum_span = vector<int>(nodes.size(), inf);
 		max_count = 0;
-
-		generate_minimum_span();
-		solve(0, max_mask, t, 0);
+		solve(0, vector<bool>(nodes.size() - 1, true), t, 0);
 
 		cout << i << " " << max_count << endl;
 	}
