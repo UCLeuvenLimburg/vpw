@@ -39,7 +39,7 @@ int minimum_span(int current_node, const vector<bool>& subset, int count) {
 
 void solve(int current_node, vector<bool> subset, int time_left, int food_count) {	// Brute force with heuristic (~ minimum spanning tree)
 	if (max_count == nodes.size() - 1) return;
-	if (minimum_span(current_node, subset, max(0, max_count - food_count)) > time_left) return;
+	if (minimum_span(current_node, subset, max_count - food_count + 1) > time_left) return;
 
 	max_count = max(max_count, food_count);
 
