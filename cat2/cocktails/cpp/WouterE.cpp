@@ -1,41 +1,33 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <set>
 
 using namespace std;
 
-vector<bool> barman_busy;
-vector<vector<int>> graph;
+bool assign_cocktail_to_barman(int cocktail, vector<bool>& seen, vector<int>& barman_busy, const vector<vector<int>>& graph) {
+	for (int barman : graph.at(cocktail)) {
+		if (!seen.at(barman)) {
+			seen.at(barman) = true;
 
-bool found_path_left(int index, set<int> seen);
-bool found_path_right(int index, const set<int>& seen) {
-	if (!barman_busy.at(index)) return barman_busy.at(index) = true;
-
-	for (int i = 0; i < graph.size(); i++) {
-		if (graph.at(i).at(index) == -1 && found_path_left(i, seen)) return graph.at(i).at(index) = 1;
+			if (barman_busy.at(barman) < 0 || assign_cocktail_to_barman(barman_busy.at(barman), seen, barman_busy, graph)) {
+				barman_busy.at(barman) = cocktail;
+				return true;
+			}
+		}
 	}
 	return false;
 }
 
-bool found_path_left(int index, set<int> seen) {
-	if (!seen.insert(index).second) return false;
-
-	for (int i = 0; i < graph.at(index).size(); i++) {
-		if (graph.at(index).at(i) == 1 && found_path_right(i, seen)) return graph.at(index).at(i) = -1;
-	}
-	return false;
-}
-
-bool maximum_matching_bipartite_graph(string bestelling) {		// Maximum flow problem
+bool maximum_matching_bipartite_graph(const string& bestelling, vector<int> barman_busy, const vector<vector<int>>& graph) {
 	if (bestelling.size() > barman_busy.size()) return false;
 	for (char c : bestelling) {
-		if (!found_path_left(c - 'A', set<int>())) return false;
+		vector<bool> seen(barman_busy.size(), false);
+		if (!assign_cocktail_to_barman(c - 'A', seen, barman_busy, graph)) return false;
 	}
 	return true;
 }
 
-int main() {
+int main() {				// Maximum flow problem
 	int n;
 	cin >> n;
 
@@ -43,8 +35,16 @@ int main() {
 		int m;
 		cin >> m;
 
-		vector<string> barmannen(m, "");
-		for (int j = 0; j < m; j++) cin >> barmannen.at(j);
+		vector<int> barman_busy = vector<int>(m, -1);
+		vector<vector<int>> graph = vector<vector<int>>(26, vector<int>());
+		for (int k = 0; k < m; k++) {
+			string str;
+			cin >> str;
+
+			for (char c : str) {
+				graph.at(c - 'A').push_back(k);
+			}
+		}
 
 		int b;
 		cin >> b;
@@ -53,17 +53,7 @@ int main() {
 			string line;
 			cin >> line;
 
-			barman_busy = vector<bool>(m, false);
-			graph = vector<vector<int>>(26, vector<int>(m, 0));
-			for (char c : line) {
-				for (int k = 0; k < m; k++) {
-					if (barmannen.at(k).find(c) < barmannen.at(k).size()) {
-						graph.at(c - 'A').at(k) = 1;
-					}
-				}
-			}
-
-			if (maximum_matching_bipartite_graph(line)) {
+			if (maximum_matching_bipartite_graph(line, barman_busy, graph)) {
 				cout << line << " mogelijk" << endl;
 			}
 			else {
