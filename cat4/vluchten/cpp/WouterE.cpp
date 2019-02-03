@@ -12,55 +12,25 @@ using vii = vector<ii>;
 using vb = vector<bool>;
 
 vii flights, airplanes;
-map<pair<vb, vb>, int> cache;
+map<vb, int> cache;
 
-int solve(vb fs, vb as) {
-	if (cache.find({ fs, as }) != cache.end()) {
-		return cache.at({ fs, as });
-	}
-
-	if (all_of(fs.begin(), fs.end(), [](bool b) { return b; })) {
-		return 0;
-	}
+int solve(int flight, vb as) {
+	if (flight == flights.size()) return 0;
+	if (cache.find(as) != cache.end()) return cache.at(as);
 
 	int min = inf;
 
-	for (int a = 0; a < flights.size(); a++) {
-		if (!fs.at(a))
+	for (int a = 0; a < airplanes.size(); a++) {
+		if (!as.at(a) && flights.at(flight).d <= airplanes.at(a).d && flights.at(flight).p <= airplanes.at(a).p)
 		{
-			int best = inf;
-			int b = -1;
-			for (int i = 0; i < airplanes.size(); i++) {
-				if (!as.at(i) && 
-					airplanes.at(i).p >= flights.at(a).p && 
-					airplanes.at(i).d >= flights.at(a).d)
-				{
-					int cost = (airplanes.at(i).p - flights.at(a).p) * flights.at(a).d;
-
-					if (cost < best) {
-						best = cost;
-						b = i;
-					}
-				}
-			}
-
-			if (b != -1) {
-				fs.at(a) = true;
-				as.at(b) = true;
-
-				int result = best + solve(fs, as);
-				if (result < min) {
-					min = result;
-				}
-
-				as.at(b) = false;
-				fs.at(a) = false;
-			}
+			as.at(a) = true;
+			int cost = flights.at(flight).d * (airplanes.at(a).p - flights.at(flight).p);
+			min = std::min(min, cost + solve(flight + 1, as));
+			as.at(a) = false;
 		}
 	}
 
-	cache[{fs, as}] = min;
-	return min;
+	return cache[as] = min;
 }
 
 int main() {
@@ -85,7 +55,7 @@ int main() {
 			airplanes.push_back({ d, p });
 		}
 
-		int result = solve(vb(flights.size(), false), vb(airplanes.size(), false));
+		int result = solve(0, vb(airplanes.size(), false));
 		if (result == inf) {
 			cout << i << " geen oplossing" << endl;
 		}
