@@ -1,32 +1,32 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <tuple>
 
 using namespace std;
 
-const int inf = 1'000'000'000;
+struct path { int cost, dist, x, y; };
+bool operator > (const path& l, const path& r) { return l.cost != r.cost ? l.cost > r.cost : l.dist > r.dist; }
 
 int r, k;
 vector<vector<int>> kaart;
 
-tuple<int, int, int, int> solve() {
+path solve() {													// dijkstra
 	vector<vector<bool>> seen(r, vector<bool>(k, false));
-	priority_queue<tuple<int, int, int, int>, vector<tuple<int, int, int, int>>, greater<tuple<int, int, int, int>>> queue;
-	for(int i = 0; i < r; i++) queue.push({ 0, 0, -1, i });
 
-	while (get<2>(queue.top()) != k - 1) {
-		int cost, dist, x, y;
-		tie(cost, dist, x, y) = queue.top();
+	priority_queue<path, vector<path>, greater<path>> queue;
+	for(int i = 0; i < r; i++) queue.push(path{ 0, 0, -1, i });
+
+	while (queue.top().x != k - 1) {
+		path p = queue.top();
 		queue.pop();
 
-		if (x < 0 || !seen.at(y).at(x)) {
-			if(x >= 0) seen.at(y).at(x) = true;
+		if (p.x < 0 || !seen.at(p.y).at(p.x)) {
+			if(p.x >= 0) seen.at(p.y).at(p.x) = true;
 
-			queue.push({ cost + kaart.at(y).at(x + 1), dist + 1, x + 1, y });
-			if (x > 0) queue.push({ cost + kaart.at(y).at(x - 1), dist + 1, x - 1, y });
-			if (x >= 0 && y > 0) queue.push({ cost + kaart.at(y - 1).at(x), dist + 1, x, y - 1 });
-			if (x >= 0 && y < r - 1) queue.push({ cost + kaart.at(y + 1).at(x), dist + 1, x, y + 1 });
+			queue.push(								{ p.cost + kaart.at(p.y).at(p.x + 1), p.dist + 1, p.x + 1, p.y });
+			if (p.x > 0) queue.push(				{ p.cost + kaart.at(p.y).at(p.x - 1), p.dist + 1, p.x - 1, p.y });
+			if (p.x >= 0 && p.y > 0) queue.push(	{ p.cost + kaart.at(p.y - 1).at(p.x), p.dist + 1, p.x, p.y - 1 });
+			if (p.x >= 0 && p.y < r - 1) queue.push({ p.cost + kaart.at(p.y + 1).at(p.x), p.dist + 1, p.x, p.y + 1 });
 		}
 	}
 
@@ -47,7 +47,7 @@ int main() {
 			}
 		}
 
-		auto sol = solve();
-		cout << i << " " << get<1>(sol) << " " << get<0>(sol) << endl;
+		path sol = solve();
+		cout << i << " " << sol.dist << " " << sol.cost << endl;
 	}
 }
