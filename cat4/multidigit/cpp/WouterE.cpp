@@ -14,18 +14,6 @@ int cost(int target) {
 
 	int best = inf;
 
-	for (int x : cijfers) {
-		int getal = x;
-		int cost = 1;
-
-		while (getal < target) {
-			getal = getal * 10 + x;
-			cost++;
-		}
-
-		if (getal == target) return cache.at(target) = cost;
-	}
-
 	for (int i = 2; i * i <= target; i++) {
 		if (target % i == 0) {
 			best = min(best, cost(i) + cost(target / i));
@@ -44,16 +32,23 @@ int main() {
 	cin >> n;
 
 	for (int i = 1; i <= n; i++) {
-		int c;
-		cin >> c;
+		int c, target;
 
+		cin >> c;
 		cijfers = vector<int>(c, 0);
 		for (int j = 0; j < c; j++) cin >> cijfers.at(j);
 
-		int target;
 		cin >> target;
-
 		cache = vector<int>(target + 1, -1);
+
+		for (int x : cijfers) {
+			int getal = x, cost = 1;
+			while (getal <= target) {
+				cache.at(getal) = cost;
+				getal = getal * 10 + x;
+				cost++;
+			}
+		}
 
 		int sol = cost(target);
 		if(sol == inf) cout << 0 << endl;
