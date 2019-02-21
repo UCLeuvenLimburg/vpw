@@ -33,20 +33,12 @@ int bellman_ford(int target_flight) {
 	for (auto p : used_airplane_to_flight) min_cost_airplane.at(p.first) = inf;
 
 	int airplane = min_element(min_cost_airplane.begin(), min_cost_airplane.end()) - min_cost_airplane.begin();
-	int flight = assign_airplane_to_flight.at(airplane);
-
-	if (!used_airplane_to_flight.insert({ airplane, flight }).second) return inf;
+	int assign_cost = min_cost_airplane.at(airplane);
 	
-	int assign_cost = cost.at(flight).at(airplane);
-
-	while (flight != target_flight) {
-		airplane = remove_flight_from_airplane.at(flight);
-		assign_cost -= cost.at(flight).at(airplane);
-
-		flight = assign_airplane_to_flight.at(airplane);
-		assign_cost += cost.at(flight).at(airplane);
-
+	while (airplane != -1) {
+		int flight = assign_airplane_to_flight.at(airplane);
 		used_airplane_to_flight[airplane] = flight;
+		airplane = remove_flight_from_airplane.at(flight);
 	}
 
 	return assign_cost;
