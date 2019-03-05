@@ -1,8 +1,9 @@
 #include <iostream>
+#include <algorithm>
 #include <string>
 #include <vector>
-#include <set>
 #include <queue>
+#include <set>
 
 using namespace std;
 

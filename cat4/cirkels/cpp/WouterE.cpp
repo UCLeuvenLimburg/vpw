@@ -1,79 +1,66 @@
 #include <iostream>
-#include <vector>
 #include <algorithm>
+#include <vector>
 
 using namespace std;
 
-using i = int;
-using vi = vector<i>;
-struct ii { i n, r; };
-using vii = vector<ii>;
-struct C { i x, y, r; };
-using vc = vector<C>;
+struct ii { int n, r; };
+struct C { int x, y, r; };
+
+vector<C> cirkels;
+vector<int> getallen;
 
 int dist(C c1, C c2) {
 	return (c1.x - c2.x) * (c1.x - c2.x) + (c1.y - c2.y) * (c1.y - c2.y);
 }
 
-double min_dist(const vc& cirkels, C cirkel) {
+double min_dist(const vector<C>& cs, C cirkel) {
 	double min = 1'000'000'000.0;
 
-	for (C c : cirkels) {
+	for (C c : cs) {
 		if (c.x != cirkel.x && c.y != cirkel.y) {
-			double d = sqrt(dist(c, cirkel)) - c.r - cirkel.r;
-			if (d < min) min = d;
+			min = std::min(min, sqrt(dist(c, cirkel)) - c.r - cirkel.r);
 		}
 	}
 
 	return min;
 }
 
-bool possible(vc cs, vii sets) {
-	sort(sets.begin(), sets.end(), [](ii l, ii r) { return l.r > r.r; });
+bool end_of_game(vector<ii> bins) {
+	sort(bins.begin(), bins.end(), [](ii l, ii r) { return l.r > r.r; });
+	vector<C> cs = cirkels;
 
-	for (ii nr : sets) {
-		auto it = max_element(cs.begin(), cs.end(), [&cs](C c1, C c2) {return c1.r > 0 ? true : c2.r > 0 ? false : min_dist(cs, c1) < min_dist(cs, c2); });
+	for (ii bin : bins) {
+		auto it = max_element(cs.begin(), cs.end(), [cs](C c1, C c2) { 
+			if ((c1.r > 0) != (c2.r > 0)) return c1.r > 0;
+			return min_dist(cs, c1) < min_dist(cs, c2); 
+		});
 
-		(*it).r = nr.r;
+		(*it).r = bin.r;
+
+		if (min_dist(cs, *it) <= 0) return true;
 	}
 
-	for (int i = 0; i < cs.size(); i++) {
-		for (int j = i + 1; j < cs.size(); j++) {
-			if (dist(cs.at(i), cs.at(j)) <= (cs.at(i).r + cs.at(j).r) * (cs.at(i).r + cs.at(j).r)) {
-				return false;
-			}
-		}
-	}
-
-	return true;
+	return false;
 }
 
-int solve(const vc& cirkels, const vi& getallen, const vii& sets, int index) {
-	if (index == getallen.size()) return 0;
+int solve(const vector<ii>& bins, int index) {
+	if (index == getallen.size() || end_of_game(bins)) {
+		int sum = 0;
+		for (ii p : bins) sum += p.n * p.r;
+		return sum;
+	}
 
 	int max = 0;
 
-	for (int i = 0; i < sets.size(); i++) {
-		vii tmp(sets);
-		ii& p = tmp.at(i);
+	for (int i = 0; i < bins.size(); i++) {
+		vector<ii> tmp = bins;
+		if (tmp.at(i).n == 0 && tmp.size() < cirkels.size()) tmp.push_back({ 0, 0 });
 
-		int prev = p.n * p.r;
+		tmp.at(i).n++;
+		tmp.at(i).r += getallen.at(index);
 
-		p.n++;
-		p.r += getallen.at(index);
-
-		int score = p.n * p.r - prev;
-		if (possible(cirkels, tmp)) score += solve(cirkels, getallen, tmp, index + 1);
-		if (score > max) max = score;
-	}
-
-	if(sets.size() < cirkels.size()){
-		vii tmp(sets);
-		tmp.push_back({1, getallen.at(index)});
-
-		int score = getallen.at(index);
-		if(possible(cirkels, tmp)) score += solve(cirkels, getallen, tmp, index + 1);
-		if (score > max) max = score;
+		max = std::max(max, solve(tmp, index + 1));
 	}
 
 	return max;
@@ -87,20 +74,12 @@ int main() {
 		int cs, gs;
 		cin >> cs >> gs;
 
-		vc cirkels;
-		for (int a = 0; a < cs; a++) {
-			int x, y;
-			cin >> x >> y;
-			cirkels.push_back({ x, y, 0});
-		}
+		cirkels = vector<C>(cs, { 0, 0, 0 });
+		for (int a = 0; a < cs; a++) cin >> cirkels.at(a).x >> cirkels.at(a).y;
 
-		vi getallen;
-		for (int a = 0; a < gs; a++) {
-			int x;
-			cin >> x;
-			getallen.push_back(x);
-		}
+		getallen = vector<int>(gs);
+		for (int a = 0; a < gs; a++) cin >> getallen.at(a);
 
-		cout << i << " " << solve(cirkels, getallen, vii(), 0) << endl;
+		cout << i << " " << solve({ {0, 0} }, 0) << endl;
 	}
 }
