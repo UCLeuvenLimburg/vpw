@@ -1,7 +1,13 @@
-from sys import stdin
+from sys import stdin, argv
 
 # Probably requires XOR trick
 # This implementation leads to a stack overlow due do the large number of possibilities
+
+def is_odd(n):
+    return n % 2 == 1
+
+def is_even(n):
+    return n % 2 == 0
 
 def canonical(ns):
     return sorted(n for n in ns if n > 0)
@@ -13,6 +19,9 @@ def successors(ns):
         return copy
 
     return [ aux(i, j) for i in range(len(ns)) for j in range(1, ns[i]+1) ]
+
+def all_equal(ns):
+    return not ns or all(ns[0] == n  for n in ns)
 
 class Node:
     def __init__(self, value, children):
@@ -41,8 +50,9 @@ def fetch(ns):
 
 fetch([]).value = True
 
-for x in range(1, 1000):
-    fetch([x, x]).value = False
+for n in range(2, 20):
+    for x in range(2, 1000):
+        fetch([x] * n).value = is_odd(n)
 
 def losing(ns):
     global cache
@@ -77,4 +87,8 @@ def main():
         else:
             print(f'{index} HOPELOOS', flush=True)
 
+def interactive():
+    print(winning([int(x) for x in argv[1:]]))
+
+# interactive()
 main()
