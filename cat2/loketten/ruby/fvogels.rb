@@ -11,6 +11,10 @@ class Time
         Time.new(0, @timestamp + other.timestamp)
     end
 
+    def -(other)
+        Time.new(0, @timestamp - other.timestamp)
+    end
+
     def <=>(other)
         timestamp <=> other.timestamp
     end
@@ -29,10 +33,16 @@ Citizen = Struct.new(:arrival, :duration)
 def solve(n_counters, citizens)
     counters = (0...n_counters).map { Time.new(0, 0) }
 
-    citizens.map do |citizen|
+    served_at, waiting_time = citizens.map do |citizen|
         counter_index = (0...counters.size).min_by { |i| counters[i] }
-        counters[counter_index] = [ counters[counter_index], citizen.arrival ].max + Time.new(0, citizen.duration)
-    end
+        served_at = [ counters[counter_index], citizen.arrival ].max
+        waiting_time = served_at - citizen.arrival
+        counters[counter_index] = served_at + Time.new(0, citizen.duration)
+    
+        [ served_at, waiting_time ]
+    end.transpose
+
+    [ served_at, waiting_time.map(&:timestamp).max ]
 end
 
 def main
@@ -49,10 +59,10 @@ def main
             Citizen.new(Time.new(h, m), d)
         end
 
-        solution = solve(n_counters, citizens)
-        solution_text = solution.map { |time| "#{time.hours} #{time.minutes}" }.join(' ')
+        served_at, max_waiting_time = solve(n_counters, citizens)
+        served_at_string = served_at.map { |time| "#{time.hours} #{time.minutes}" }.join(' ')
 
-        puts "#{index} #{solution_text}"
+        puts "#{index} #{served_at_string} #{max_waiting_time}"
     end
 end
 
